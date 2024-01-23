@@ -12,22 +12,24 @@ const protect = asyncHandler(async (req, res, next) => {
       // verify the token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const user = await User.findById(decoded.id).select("-password");
+      // this user is from the decoding id and findings
+      // then set the variable in the request to accecible for the other middlewares or the controllers
       if (user) {
         req.user = user;
         next();
       } else {
-        res.status(400).json({
+        res.status(401).json({
           message: "Invalid token",
         });
       }
     } catch (err) {
       console.log(err);
-      res.status(400).json({
+      res.status(401).json({
         message: "Invalid token",
       });
     }
   } else {
-    res.status(400).json({
+    res.status(401).json({
       message: "Invalid token",
     });
   }
